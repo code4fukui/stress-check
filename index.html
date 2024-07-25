@@ -1,0 +1,287 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>職業性ストレス簡易調査票 57項目</title>
+</head><body>
+<header>
+<h1>職業性ストレス<br>簡易調査票 57項目</h1>
+<div>アプリで手早くストレスチェック！</div>
+</header>
+<main id=main></main>
+<hr>
+<footer>
+App: 職業性ストレス簡易調査票 57項目<br>
+<a href=https://github.com/code4fukui/stress-check/>src on GitHub</a><br>
+</footer>
+
+<script type="module">
+import { CSV } from "https://js.sabae.cc/CSV.js";
+import { cr } from "https://js.sabae.cc/cr.js";
+import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
+import { removeHash } from "https://js.sabae.cc/removeHash.js";
+
+const data = await CSV.fetchJSON("./stress-check.csv");
+//console.log(data);
+// ID	職業性ストレス簡易調査票	大設問	中設問	選択肢1	選択肢2	選択肢3	選択肢4
+
+const getNextElement = (c) => {
+  for (let i = 0; i < c.parentElement.children.length - 1; i++) {
+    if (c.parentElement.children[i] == c) return c.parentElement.children[i + 1];
+  }
+  return null;
+};
+
+/*
+const scrollIntoView = (next) => { // too slow
+  next.scrollIntoView({
+    behavior: "smooth", // or "instant"
+    block: "end",
+    inline: "nearest",
+  });
+};
+*/
+const smoothScroll = (target, duration, block = "start", offsety) => { // block == "start" or "end"
+  const start = block == "start";
+  const targetPosition = start ? target.offsetTop : target.offsetTop + target.scrollHeight + offsety;
+  const startPosition = start ? scrollY : scrollY + innerHeight;
+  if (!start) {
+    if (targetPosition >= scrollY && targetPosition < scrollY + innerHeight) return;
+  } else {
+    // todo!
+  }
+  const distance = targetPosition - startPosition;
+  let startTime = null;
+  const animation = (currentTime) => {
+    if (startTime === null) startTime = currentTime;
+    const timeElapsed = currentTime - startTime;
+    const scrollAmount = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+    scrollTo(0, start ? scrollAmount : scrollAmount - innerHeight);
+    if (timeElapsed <= duration) requestAnimationFrame(animation);
+  }
+  const easeInOutQuad = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return c / 2 * t * t + b;
+    t--;
+    return -c / 2 * (t * (t - 2) - 1) + b;
+  }
+  requestAnimationFrame(animation);
+}
+
+const scrollIntoView = (next) => {
+  smoothScroll(next, 80, "end", 20);
+};
+
+
+const array = (children) => {
+  const n = new Array(children.length);
+  for (let i = 0; i < n.length; i++) {
+    n[i] = children[i];
+  }
+  return n;
+};
+
+const qrcode = new QRCode();
+const divqr = cr("div", null, "divqr");
+
+const jumpToNotAnswer = () => {
+  const divs = main.children;
+  for (let i = 0; i < data.length; i++) {
+    const div = divs[i];
+    const qs = div.querySelector(".qs");
+    const sel = qs.querySelector(".selected");
+    if (!sel) {
+      scrollIntoView(div);
+      return true;
+    }
+  }
+  return false;
+};
+
+//cr("div", divqr).textContent = "すべて回答するとQRコードが表示されます";
+const btnjump = cr("button", divqr);
+btnjump.textContent = "未回答の設問へ";
+btnjump.onclick = jumpToNotAnswer;
+divqr.appendChild(qrcode);
+qrcode.value = "abc"
+
+const setQR = (nn) => {
+  if (nn.length != data.length) return false;
+  const allanswer = nn.indexOf("0") == -1;
+  btnjump.style.display = allanswer ? "none" : "inline-block";
+  /*
+  if (!divqr.children[0] != qrcode) {
+    divqr.innerHTML = "";
+    divqr.appendChild(qrcode);
+  }
+  */
+  qrcode.value = location.href;
+  return true;
+};
+
+const setHash = () => {
+  const divs = main.children;
+  const ns = [];
+  for (let i = 0; i < data.length; i++) {
+    const div = divs[i];
+    const qs = div.querySelector(".qs");
+    const sel = qs.querySelector(".selected");
+    const n = array(qs.children).findIndex(i => i == sel) + 1;
+    ns.push(n);
+  }
+  const nn = ns.join("");
+  location.hash = nn;
+  return setQR(nn);
+};
+const getHash = () => {
+  const nn = location.hash.substring(1);
+  if (nn.length != data.length) return;
+  const divs = main.children;
+  for (let i = 0; i < data.length; i++) {
+    const n = nn[i];
+    const div = divs[i];
+    const qs = div.querySelector(".qs");
+    const sel = qs.querySelector(".selected");
+    if (sel) sel.className = "";
+    if (n > 0) qs.children[n - 1].className = "selected";
+  }
+  return setQR(nn);
+};
+const clearHash = () => {
+  const divs = main.children;
+  for (let i = 0; i < data.length; i++) {
+    const div = divs[i];
+    const qs = div.querySelector(".qs");
+    const sel = qs.querySelector(".selected");
+    if (sel) sel.className = "";
+  }
+  removeHash();
+  //scrollIntoView(document.querySelector("header"));
+  scrollTo(0, 0);
+};
+
+let idx = 1;
+for (const item of data) {
+  const div = cr("div", main, "divq");
+  cr("div", div, "idx").textContent = idx++ + " / " + data.length;
+  cr("div", div, "q1").textContent = item["大設問"];
+  cr("div", div, "q2").textContent = item["中設問"];
+  cr("div", div, "q3").textContent = item["職業性ストレス簡易調査票"];
+  const qs = cr("div", div, "qs");
+  qs.q = [];
+  for (let i = 1; i <= 4; i++) {
+    const q = cr("span", qs);
+    q.textContent = item["選択肢" + i];
+    qs.q.push(q);
+    q.onclick = () => {
+      if (q.className == "selected") return;
+      qs.q.forEach(q => q.className = "");
+      q.className = "selected";
+
+      const next = getNextElement(div);
+      if (next) {
+        scrollIntoView(next);
+      }
+      setHash();
+    };
+  }
+}
+main.appendChild(divqr);
+
+const divclear = cr("div", main, "divclear");
+const btnclear = cr("button", divclear, "btnclear");
+btnclear.textContent = "すべての回答をリセットする";
+btnclear.onclick = () => {
+  if (!confirm("すべての回答を未回答状態に戻します。\n本当によいですか？")) return;
+  clearHash();
+};
+
+getHash();
+if (!jumpToNotAnswer()) scrollIntoView(divqr);
+
+onhashchange = getHash;
+</script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+h1 {
+  margin: 0;
+  padding: 1em;
+}
+header {
+  text-align: center;
+  background-color: gray;
+  color: white;
+}
+header > div {
+  font-size: 130%;
+  padding-bottom: 1em;
+}
+main > .divq {
+  margin: 1em;
+  padding: .5em;
+  border: .4em solid lightgray;
+  line-height: 2;
+}
+.q1 {
+  font-size: 120%;
+}
+.q2 {
+  font-size: 120%;
+}
+.q3 {
+  font-size: 150%;
+}
+.qs {
+  margin-top: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.qs > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: .2em;
+  padding: .3em;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+.selected {
+  position: relative;
+  background-color: #ff8888 !important;
+  x-color: white;
+}
+.selected:before {
+  position: absolute;
+  top: 50%;
+  -webkit-transform : translateY(-50%);
+  transform : translateY(-50%);
+  font-size: 200%;
+  font-weight: bold;
+  content: '◯';
+  color: #808080;
+}
+main .divqr {
+  text-align: center;
+}
+qr-code {
+  display: block;
+}
+footer {
+  text-align: center;
+  margin: 1em;
+}
+.divclear {
+  text-align: center;
+}
+.btnclear {
+  display: inline-block;
+  font-size: 80%;
+  margin-top: 2em;
+}
+a {
+  color: gray !important;
+}
+</style>
+</body></html>
