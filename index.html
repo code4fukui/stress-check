@@ -2,13 +2,13 @@
 <title>アプリで職業性ストレス簡易調査票 57項目</title>
 </head><body>
 <header>
-<h1>アプリで職業性ストレス<br>簡易調査票 57項目</h1>
+<h1 id=h1title>アプリで職業性ストレス<br>簡易調査票 57項目</h1>
 <div>アプリで手早くストレスチェック！</div>
 </header>
 <main id=main></main>
 <hr>
 <footer>
-App: 職業性ストレス簡易調査票 57項目<br>
+App: アプリでサクサクアンケート<br>
 <a href=https://github.com/code4fukui/stress-check/>src on GitHub</a><br>
 </footer>
 
@@ -18,7 +18,14 @@ import { cr } from "https://js.sabae.cc/cr.js";
 import { QRCode } from "https://code4fukui.github.io/qr-code/qr-code.js";
 import { removeHash } from "https://js.sabae.cc/removeHash.js";
 
-const data = await CSV.fetchJSON("./stress-check.csv");
+const default_csvname = "stress-check";
+const csvname = new URL(location.href).searchParams.get("name") || default_csvname;
+
+const index = await CSV.fetchJSON("./index.csv");
+const header = index.find(i => i.name == csvname);
+document.title = h1title.textContent = header.apptitle;
+
+const data = await CSV.fetchJSON(header.csv);
 //console.log(data);
 // ID	職業性ストレス簡易調査票	大設問	中設問	選択肢1	選択肢2	選択肢3	選択肢4
 
@@ -157,18 +164,22 @@ const clearHash = () => {
   scrollTo(0, 0);
 };
 
+const nanswer = Object.keys(data[0]).filter(i => i.startsWith("answer")).length;
+
 let idx = 1;
 for (const item of data) {
   const div = cr("div", main, "divq");
   cr("div", div, "idx").textContent = idx++ + " / " + data.length;
-  cr("div", div, "q1").textContent = item["大設問"];
-  cr("div", div, "q2").textContent = item["中設問"];
-  cr("div", div, "q3").textContent = item["職業性ストレス簡易調査票"];
+  if (item.category1) cr("div", div, "q1").textContent = item.category1;
+  if (item.category2) cr("div", div, "q2").textContent = item.category2;
+  cr("div", div, "q3").textContent = item.question;
   const qs = cr("div", div, "qs");
+  qs.style.gridTemplateColumns = "1fr ".repeat(nanswer).trim();
   qs.q = [];
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= nanswer; i++) {
     const q = cr("span", qs);
-    q.textContent = item["選択肢" + i];
+    console.log("1fr ".repeat(nanswer).trim())
+    q.textContent = item["answer" + i];
     qs.q.push(q);
     q.onclick = () => {
       if (q.className == "selected") return;
