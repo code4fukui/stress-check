@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>QRストレスチェック計算</title>
+</head><body>
+<h1>QRストレスチェック計算</h1>
+
+<script type="module" src="https://code4fukui.github.io/qr-code-reader/qr-code-reader.js"></script>
+<qr-code-reader id=qrr></qr-code-reader><br>
+<button id=btn>stop</button>
+
+<main id=main></main>
+
+<script type="module">
+import { calcStress } from "./calcStress.js";
+import { CSV } from "https://code4fukui.github.io/CSV/CSV.js";
+
+qrr.oninput = (s) => {
+  const res = s.data;
+  qrr.stop();
+
+  const rank = calcStress(res.substring(res.indexOf("#") + 1));
+  main.innerHTML = "";
+  main.appendChild(CSV.makeTable(CSV.fromJSON(rank)));
+};
+btn.onclick = () => qrr.stop();
+</script>
+
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  display: inline-block;
+}
+td, th {
+  border: 1px solid black;
+  padding: 0.1em .2em;
+}
+</style>
+<hr>
+<a href=https://code4fukui.github.io/stress-check/>QRストレスチェックアプリ</a><br>
+<a href=https://github.com/code4fukui/stress-check/>src on GitHub</a>
+</body></html>

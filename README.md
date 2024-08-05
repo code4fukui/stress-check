@@ -1,6 +1,8 @@
 # stress-check
 
 - [アプリで職業性ストレス簡易調査票 57項目](https://code4fukui.github.io/stress-check/)
+- [アプリで職業性ストレス簡易調査票 57項目 計算アプリ](https://code4fukui.github.io/stress-check/checker.html)
+
 - [はたらく主観的価値についての調査 3項目](https://code4fukui.github.io/stress-check/?name=workwellb-check)
 
 ## reference
