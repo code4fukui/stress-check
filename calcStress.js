@@ -12,6 +12,8 @@ stresscheck.forEach(i => {
 const calcurl = "https://code4fukui.github.io/stress-check/stresscheck-calctable.csv";
 const calctable = await CSV.fetchJSON(calcurl);
 
+export const getCalcTable = () => calctable;
+
 export const calcStress = (stresssurvey) => { // [1-4]*57 + 性別
   if (calctable.length != 19) throw new Error("can't load stresscehck-calctable.csv");
   if (stresssurvey.length < 57) throw new Error("not match");
