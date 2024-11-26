@@ -9,10 +9,11 @@ stresscheck.forEach(i => {
   i.category = i.category1[0];
 });
 
-const calcurl = "./stresscheck-calctable.csv";
+const calcurl = "https://code4fukui.github.io/stress-check/stresscheck-calctable.csv";
 const calctable = await CSV.fetchJSON(calcurl);
 
 export const calcStress = (stresssurvey) => { // [1-4]*57 + 性別
+  if (calctable.length != 19) throw new Error("can't load stresscehck-calctable.csv");
   if (stresssurvey.length < 57) throw new Error("not match");
   const sex = stresssurvey.length >= 57 || stresssurvey[57] == "1" ? "男" : "女";
   const res = [];
