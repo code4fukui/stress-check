@@ -17,7 +17,9 @@ qrr.oninput = (s) => {
   const res = s.data;
   qrr.stop();
 
-  const rank = calcStress(res.substring(res.indexOf("#") + 1));
+  const data = res.substring(res.indexOf("#") + 1);
+  console.log(data);
+  const rank = calcStress(data);
   main.innerHTML = "";
   if (rank.find(i => i.尺度 == "高ストレス判定").評価点 == "高ストレス") {
     const div = document.createElement("div");
