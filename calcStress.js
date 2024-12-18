@@ -48,8 +48,9 @@ export const calcStress = (stresssurvey) => { // [1-4]*57 + 性別
     sums[cate] = sum;
     res.unshift(o);
   }
+  const midstress = sums.B <= 14 || sums.A + sums.C <= 35;
   const highstress = sums.B <= 12 || sums.A + sums.C <= 26 && sums.B <= 17;
-  res.unshift({ カテゴリ: "", 尺度: "高ストレス判定", 評価点: highstress ? "高ストレス" : "-" });
+  res.unshift({ カテゴリ: "", 尺度: "高ストレス判定", 評価点: highstress ? "高ストレス" : (midstress ? "高ストレス予備軍" : "-") });
   return res;
 };
 
