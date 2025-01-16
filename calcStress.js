@@ -11,6 +11,9 @@ stresscheck.forEach(i => {
 
 const calcurl = "https://code4fukui.github.io/stress-check/stresscheck-calctable.csv";
 const calctable = await CSV.fetchJSON(calcurl);
+calctable.forEach(i => {
+  i.尺度 += (i.評価点 == "54321" ? "のなさ" : "");
+});
 
 export const getCalcTable = () => calctable;
 
@@ -28,9 +31,7 @@ export const calcStress = (stresssurvey) => { // [1-4]*57 + 性別
       }
     }
     const point = calcPoint(calc.計算式, n);
-    const o = { カテゴリ: calc.カテゴリ };
-    const measure = calc.尺度 + (calc.評価点 == "54321" ? "のなさ" : "");
-    o[measure] = calc.尺度;
+    const o = { カテゴリ: calc.カテゴリ, 尺度: calc.尺度 };
     let rank = 0;
     for (let i = 1; i <= 5; i++) {
       if (point <= parseInt(calc[sex + "性" + i])) {
