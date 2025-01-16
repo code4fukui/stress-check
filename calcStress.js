@@ -28,7 +28,9 @@ export const calcStress = (stresssurvey) => { // [1-4]*57 + 性別
       }
     }
     const point = calcPoint(calc.計算式, n);
-    const o = { カテゴリ: calc.カテゴリ, 尺度: calc.尺度 }; //, ポイント: point };
+    const o = { カテゴリ: calc.カテゴリ };
+    const measure = calc.尺度 + (calc.評価点 == "54321" ? "のなさ" : "");
+    o[measure] = calc.尺度;
     let rank = 0;
     for (let i = 1; i <= 5; i++) {
       if (point <= parseInt(calc[sex + "性" + i])) {
