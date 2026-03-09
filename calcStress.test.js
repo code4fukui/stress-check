@@ -10,6 +10,7 @@ Deno.test("worst case", () => {
   t.assertEquals(res[1].評価点, 9); // A
   t.assertEquals(res[2].評価点, 6); // B
   t.assertEquals(res[3].評価点, 3); // C
+  t.assertEquals(res.find(i => i.尺度 == "仕事や生活の満足度").評価点, 1);
 });
 Deno.test("best case", () => {
   const res = calcStress(best);
@@ -17,6 +18,7 @@ Deno.test("best case", () => {
   t.assertEquals(res[1].評価点, 42); // A
   t.assertEquals(res[2].評価点, 30); // B
   t.assertEquals(res[3].評価点, 15); // C
+  t.assertEquals(res.find(i => i.尺度 == "仕事や生活の満足度").評価点, 5);
 });
 Deno.test("calctable", () => {
   const showcols = getCalcTable().map(i => i.尺度);
