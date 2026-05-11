@@ -1,10 +1,8 @@
 # stress-check
 
-> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
-
 職業性ストレス簡易調査票（57項目）の自動計算ツール。Webアプリ、CLI、JavaScriptライブラリとして利用できます。
 
-## デモ (Demo)
+## デモ
 
 - **[ストレスチェックアプリ](https://code4fukui.github.io/stress-check/)**  
   Webフォームで57項目に回答するアプリ。
@@ -13,7 +11,7 @@
 - **[はたらく主観的価値についての調査 (3項目)](https://code4fukui.github.io/stress-check/?name=workwellb-check)**  
   関連する簡易調査アプリ。
 
-## 特徴 (Features)
+## 特徴
 
 - **ストレスレベル判定**: 57項目の回答文字列から、厚生労働省のマニュアルに基づきストレスレベルを自動計算します。
 - **高ストレス者判定**: 「仕事のストレス要因」「心身のストレス反応」「周囲のサポート」の3領域の評価点合計から高ストレス者を判定します。
@@ -22,7 +20,7 @@
     - **Deno CLI**: コマンドラインから直接計算を実行できます。
     - **ES Module**: JavaScriptモジュールとしてWebアプリケーションに組み込めます。
 
-## 使い方 (Usage)
+## 使い方
 
 ### JavaScript/ES Module
 
@@ -68,13 +66,13 @@ deno run -A https://code4fukui.github.io/stress-check/cli.js 4444444111444141144
 
 -   **戻り値** (Array): `stresscheck-calctable.csv` から読み込まれた評価基準データの配列。
 
-## 参考資料 (Reference)
+## 参考資料
 
 本ツールは、厚生労働省が提供する以下の資料に基づいて作成されています。
 
 -   [ストレスチェック等の職場におけるメンタルヘルス対策・過重労働対策等｜厚生労働省](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/index.html)
 -   [職業性ストレス簡易調査票（57 項目） - 厚生労働省 PDF](https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei12/dl/stress-check_j.pdf)
 
-## ライセンス (License)
+## ライセンス
 
 [MIT](https://github.com/code4fukui/stress-check/blob/main/LICENSE)
